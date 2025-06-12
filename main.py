@@ -300,9 +300,15 @@ async def export_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     for i, entry in enumerate(history[user_id], 1):
         text += f"{i}. Command: {entry['command']}\n   Domain: {entry['domain']}\n   Time: {entry['time']}\n\n"
 
-    pdf_file = generate_pdf_report(text, filename=f"recon_report_{user_id}.pdf")
-    with open(pdf_file, "rb") as f:
-        await update.message.reply_document(document=f, filename=pdf_file)
+    pdf_filename = f"recon_report_{user_id}.pdf"
+    generate_pdf_report(text, filename=pdf_filename)
+
+    try:
+        with open(pdf_filename, "rb") as f:
+            await update.message.reply_document(document=f, filename=pdf_filename)
+    except Exception as e:
+        await update.message.reply_text(f"Error sending report: {e}")
+
     # Send PDF
 from telegram.ext import ApplicationBuilder
 
