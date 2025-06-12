@@ -181,6 +181,7 @@ def generate_pdf_report(text, filename="report.pdf"):
     from fpdf import FPDF
     pdf = FPDF()
     pdf.add_page()
+    pdf.set_auto_page_break(auto=True, margin=15)
     pdf.set_font("Arial", size=12)
     for line in text.split("\n"):
         pdf.cell(0, 10, line, ln=True)
@@ -300,7 +301,8 @@ async def export_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         text += f"{i}. Command: {entry['command']}\n   Domain: {entry['domain']}\n   Time: {entry['time']}\n\n"
 
     pdf_file = generate_pdf_report(text, filename=f"recon_report_{user_id}.pdf")
-
+    with open(pdf_file, "rb") as f:
+        await update.message.reply_document(document=f, filename=pdf_file)
     # Send PDF
 from telegram.ext import ApplicationBuilder
 
