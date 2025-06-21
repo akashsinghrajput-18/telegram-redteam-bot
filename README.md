@@ -31,6 +31,21 @@ Free, unlimited, and deployable with secure token handling.
 - dotenv
 
 ---
+## 💬 Telegram Bot Commands
+
+| Command                  | Description                   |
+|--------------------------|-------------------------------|
+| `/start`                 | Welcome Message               |
+| `/help`                  | List All Commands             |
+| `/subdomain <domain>`    | Find Subdomains               |
+| `/status <domain>`       | Check Live Status             |
+| `/portscan <domain>`     | Scan Top Ports                |
+| `/whois <domain>`        | WHOIS Info                    |
+| `/screenshot <domain>`   | Capture Website Screenshot    |
+| `/takeover <subdomain>`  | Takeover Detection            |
+| `/export`                | Export Report (PDF)           |
+
+---
 
 ## 🚀 Getting Started
 
@@ -38,3 +53,13 @@ Free, unlimited, and deployable with secure token handling.
 ```bash
 git clone https://github.com/your-username/redteam_bot.git
 cd redteam_bot
+
+---
+
+## ✨ Future Upgrades
+
+- 🛠️ Telegram Admin Panel
+- 🗜️ Zip multiple reports together
+- ☁️ Cloud-based Report Sync
+- 🌐 API Layer for External Use
+
