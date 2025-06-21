@@ -233,6 +233,27 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "👋 Hello! मैं आपका Red Team Bot हूँ।\n"
         "Use /help to see commands."
     )
+ 
+ 
+async def nikto_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if len(context.args) != 1:
+        await update.message.reply_text("Usage: /nikto <domain>")
+        return
+
+    domain = context.args[0].lower()
+    output_file = f"nikto_{domain}.txt"
+
+    await update.message.reply_text(f"🚨 Running Nikto scan for {domain}...\nThis may take a few minutes...")
+
+    success = await run_nikto_scan(domain, output_file)
+
+    if success and os.path.exists(output_file):
+        add_to_history(update.effective_user.id, "nikto", domain)
+        with open(output_file, "rb") as f:
+            await update.message.reply_document(document=f, filename=output_file)
+    else:
+        await update.message.reply_text("❌ Failed to complete Nikto scan.")
+
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     help_text = (
@@ -247,6 +268,8 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     await update.message.reply_text(help_text)
 
+
+   
 async def subdomain_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if len(context.args) != 1:
         await update.message.reply_text("Usage: /subdomain <domain>")
@@ -316,25 +339,6 @@ async def screenshot_command(update: Update, context: ContextTypes.DEFAULT_TYPE)
         await update.message.reply_photo(photo=bio)
     else:
         await update.message.reply_text("Failed to capture screenshot.")
-
-    async def nikto_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if len(context.args) != 1:
-        await update.message.reply_text("Usage: /nikto <domain>")
-        return
-
-    domain = context.args[0].lower()
-    output_file = f"nikto_{domain}.txt"
-
-    await update.message.reply_text(f"🚨 Running Nikto scan for {domain}...\nThis may take a few minutes...")
-
-    success = await run_nikto_scan(domain, output_file)
-
-    if success and os.path.exists(output_file):
-        add_to_history(update.effective_user.id, "nikto", domain)
-        with open(output_file, "rb") as f:
-            await update.message.reply_document(document=f, filename=output_file)
-    else:
-        await update.message.reply_text("❌ Failed to complete Nikto scan.")
 
 async def takeover_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if len(context.args) != 1:
