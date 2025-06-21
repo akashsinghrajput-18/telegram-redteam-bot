@@ -150,6 +150,26 @@ async def check_takeover(subdomain):
     "JetBrains": "is not a registered InCloud site",
     "LaunchDarkly": "not found",
     "Smartling": "Domain is not configured"
+    "Intercom": r"This app does not exist",
+    "Helpjuice": r"This knowledge base no longer exists",
+    "Kinsta": r"No site found at this domain",
+    "GetResponse": r"Page not found",
+    "Kajabi": r"Sorry, this page isn't available",
+    "Teachable": r"This school is no longer available",
+    "Thinkific": r"This page is no longer available",
+    "Instapage": r"404 - page not found",
+    "NationBuilder": r"Website Not Found",
+    "Vend": r"This store is unavailable",
+    "Canny": r"404 - That page doesn’t exist",
+    "Aha!": r"Not found - Aha!",
+    "Gumroad": r"Sorry, this page no longer exists",
+    "ReadTheDocs": r"404 Not Found",
+    "Fly.io": r"404 Not Found",
+    "Foxycart": r"This store does not exist",
+    "HelpScout": r"not found",
+    "Brightcove": r"The requested page could not be found",
+     "Agile CRM": r"This domain is not configured",
+
     }
 
     try:
