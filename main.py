@@ -246,6 +246,7 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "/whois <domain> - WHOIS lookup\n"
         "/screenshot <domain> - Capture website screenshot\n"
         "/takeover <subdomain> - Check subdomain takeover\n"
+        "/nikto <domain> - Run Nikto vulnerability scan\n"
         "/export - Export your recon history report\n"
     )
     await update.message.reply_text(help_text)
@@ -364,9 +365,9 @@ def main():
     app.add_handler(CommandHandler("status", status_command))
     app.add_handler(CommandHandler("portscan", portscan_command))
     app.add_handler(CommandHandler("whois", whois_command))
-    app.add_handler(CommandHandler("nikto", nikto_command))
     app.add_handler(CommandHandler("screenshot", screenshot_command))
     app.add_handler(CommandHandler("takeover", takeover_command))
+    app.add_handler(CommandHandler("nikto", nikto_command))
     app.add_handler(CommandHandler("export", export_command))
 
     print("🚀 RedTeam Bot is running...")
