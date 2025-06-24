@@ -43,23 +43,6 @@ def add_to_history(user_id, command, domain):
     history[user_str].append(entry)
     save_history(history)
 
-# Helper function to run nikto scan with tuning
-async def run_nikto_scan(domain: str, output_file: str):
-    # Nikto command with tuning flags 1,2,3,b (File Upload, Interesting Files, Misconfiguration, Backup files)
-    cmd = [
-        "nikto",
-        "-h", f"http://{domain}",
-        "-o", output_file,
-        "-Format", "txt",
-        "-Tuning", "123b"
-    ]
-    try:
-        # Run command synchronously - can be improved with async subprocess if needed
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=600)  # 10 mins timeout
-        return result.returncode == 0
-    except Exception as e:
-        print(f"Error running nikto scan: {e}")
-        return False
 
 # Subdomain Finder using public API (crt.sh)
 async def find_subdomains(domain):
@@ -217,26 +200,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
  
  
-async def nikto_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if len(context.args) != 1:
-        await update.message.reply_text("Usage: /nikto <domain>")
-        return
-
-    domain = context.args[0].lower()
-    output_file = f"nikto_{domain}.txt"
-
-    await update.message.reply_text(f"🚨 Running Nikto scan for {domain}...\nThis may take a few minutes...")
-
-    success = await run_nikto_scan(domain, output_file)
-
-    if success and os.path.exists(output_file):
-        add_to_history(update.effective_user.id, "nikto", domain)
-        with open(output_file, "rb") as f:
-            await update.message.reply_document(document=f, filename=output_file)
-    else:
-        await update.message.reply_text("❌ Failed to complete Nikto scan.")
-
-
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     help_text = (
         "Available commands:\n"
@@ -246,7 +209,6 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "/whois <domain> - WHOIS lookup\n"
         "/screenshot <domain> - Capture website screenshot\n"
         "/takeover <subdomain> - Check subdomain takeover\n"
-        "/nikto <domain> - Run Nikto vulnerability scan\n"
         "/export - Export your recon history report\n"
     )
     await update.message.reply_text(help_text)
@@ -367,7 +329,6 @@ def main():
     app.add_handler(CommandHandler("whois", whois_command))
     app.add_handler(CommandHandler("screenshot", screenshot_command))
     app.add_handler(CommandHandler("takeover", takeover_command))
-    app.add_handler(CommandHandler("nikto", nikto_command))
     app.add_handler(CommandHandler("export", export_command))
 
     print("🚀 RedTeam Bot is running...")
