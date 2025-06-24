@@ -1,22 +1,21 @@
 FROM python:3.10
 
-# Update apt and install perl, curl, git
-RUN apt-get update && apt-get install -y perl curl git && rm -rf /var/lib/apt/lists/*
+# Install dependencies and clone Nikto
+RUN apt-get update && \
+    apt-get install -y git perl curl libnet-ssleay-perl openssl && \
+    git clone https://github.com/sullo/nikto.git /opt/nikto && \
+    chmod +x /opt/nikto/program/nikto.pl && \
+    ln -s /opt/nikto/program/nikto.pl /usr/local/bin/nikto && \
+    rm -rf /var/lib/apt/lists/*
 
-# Clone nikto repo from GitHub
-RUN git clone https://github.com/sullo/nikto.git /opt/nikto
-
-# Add nikto to PATH
-ENV PATH="/opt/nikto:${PATH}"
-
-# Set working directory inside container
+# Set working directory
 WORKDIR /app
 
-# Copy all files (including your bot scripts and requirements.txt)
+# Copy bot files
 COPY . /app
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Default command to run your bot
+# Default run command
 CMD ["python", "main.py"]
