@@ -128,7 +128,7 @@ def whois_lookup(domain):
 async def check_takeover(subdomain):
     # Basic services known for takeover vulnerabilities
     takeover_signatures = {
-        "Amazon S3": "NoSuchBucket",
+    "Amazon S3": "NoSuchBucket",
     "GitHub": "There isn't a GitHub Pages site here.",
     "Heroku": "No such app",
     "Bitbucket": "Repository not found",
@@ -154,12 +154,12 @@ async def check_takeover(subdomain):
     "Thinkific": "Oops! This page is no longer available",
     "Unbounce": "The requested URL was not found on this server",
     "Wishpond": "404 Error - Page Not Found",
-    "Webflow": "The page you are looking for doesn’t exist",
+    "Webflow": "The page you are looking for doesnt exist",
     "UptimeRobot": "page not found",
     "Zoho Sites": "We couldn't find the page you're looking for.",
     "AfterShip": "Oops! The page you are looking for does not exist",
     "Acquia": "Website not found",
-    "Bigcartel": "Oops! We couldn’t find that page.",
+    "Bigcartel": "Oops! We couldnt find that page.",
     "Campaign Monitor": "does not exist",
     "Close.io": "not found",
     "FeedPress": "The feed has not been found.",
@@ -167,26 +167,8 @@ async def check_takeover(subdomain):
     "Ghost": "The thing you were looking for is no longer here",
     "JetBrains": "is not a registered InCloud site",
     "LaunchDarkly": "not found",
-    "Smartling": "Domain is not configured"
-    "Intercom": r"This app does not exist",
-    "Helpjuice": r"This knowledge base no longer exists",
-    "Kinsta": r"No site found at this domain",
-    "GetResponse": r"Page not found",
-    "Kajabi": r"Sorry, this page isn't available",
-    "Teachable": r"This school is no longer available",
-    "Thinkific": r"This page is no longer available",
-    "Instapage": r"404 - page not found",
-    "NationBuilder": r"Website Not Found",
-    "Vend": r"This store is unavailable",
-    "Canny": r"404 - That page doesn’t exist",
-    "Aha!": r"Not found - Aha!",
-    "Gumroad": r"Sorry, this page no longer exists",
-    "ReadTheDocs": r"404 Not Found",
-    "Fly.io": r"404 Not Found",
-    "Foxycart": r"This store does not exist",
-    "HelpScout": r"not found",
-    "Brightcove": r"The requested page could not be found",
-     "Agile CRM": r"This domain is not configured",
+    "Smartling": "Domain is not configured",
+    "Helpjuice": r"This knowledge base no longer exists"
 
     }
 
