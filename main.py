@@ -44,50 +44,6 @@ def add_to_history(user_id, command, domain):
     save_history(history)
 
 
-# Async wrapper for running nmap subprocess
-async def run_nmap_scan(domain: str, timeout: int = 300) -> str:
-    # filename safe for domain
-    filename = f"nmap_{domain.replace('.', '_')}.txt"
-    
-    # Nmap command with advanced flags
-    command = [
-        "nmap",
-        "-A",                 # Aggressive scan (OS, version, script)
-        "-T4",                # Timing template faster but polite
-        "-p-",                # Scan all ports
-        "--script", "vuln",   # Run vulnerability scripts
-        "--reason",           # Reason for port state
-        "--open",             # Show only open ports
-        "--traceroute",       # Trace route to target
-        domain
-    ]
-
-    try:
-        # Run subprocess asynchronously, output to file
-        proc = await asyncio.create_subprocess_exec(
-            *command,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
-        )
-
-        try:
-            stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=timeout)
-        except asyncio.TimeoutError:
-            proc.kill()
-            await proc.communicate()
-            return "timeout"
-
-        # Write output to file
-        with open(filename, "wb") as f:
-            f.write(stdout)
-
-        return filename
-
-    except Exception as e:
-        return f"error: {e}"
-
-
-
 # Subdomain Finder using public API (crt.sh)
 async def find_subdomains(domain):
     url = f"https://crt.sh/?q=%25.{domain}&output=json"
@@ -253,7 +209,6 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "/whois <domain> - WHOIS lookup\n"
         "/screenshot <domain> - Capture website screenshot\n"
         "/takeover <subdomain> - Check subdomain takeover\n"
-        "/nmap <domain> - Run Advanced Nmap Deep Scan\n"
         "/export - Export your recon history report\n"
     )
     await update.message.reply_text(help_text)
@@ -340,30 +295,6 @@ async def takeover_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     add_to_history(update.effective_user.id, "takeover", subdomain)
     await update.message.reply_text(result)
 
-async def nmap_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if len(context.args) != 1:
-        await update.message.reply_text("❗Usage: /nmap <domain>")
-        return
-
-    domain = context.args[0]
-    user_id = update.effective_user.id
-
-    log_activity(user_id, "/nmap", domain)
-    await update.message.reply_text(f"🛡️ Running advanced Nmap scan on `{domain}`...\nThis may take a few minutes.", parse_mode="Markdown")
-
-    result = await run_nmap_scan(domain)
-
-    if result == "timeout":
-        await update.message.reply_text("⏳ Scan timed out. Try a simpler scan or check the domain.")
-    elif result.startswith("error:"):
-        await update.message.reply_text(f"❌ Scan error: {result[6:]}")
-    elif os.path.exists(result):
-        # Send file to user
-        with open(result, "rb") as f:
-            await update.message.reply_document(document=f, filename=result)
-        os.remove(result)
-    else:
-        await update.message.reply_text("❌ Scan failed for unknown reasons.")
 
 
 async def export_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -400,7 +331,6 @@ def main():
     app.add_handler(CommandHandler("whois", whois_command))
     app.add_handler(CommandHandler("screenshot", screenshot_command))
     app.add_handler(CommandHandler("takeover", takeover_command))
-    app.add_handler(CommandHandler("nmap", nmap_command))
     app.add_handler(CommandHandler("export", export_command))
 
     print("🚀 RedTeam Bot is running...")
