@@ -74,6 +74,24 @@ async def check_domain_status(domain):
         return True
     return False
 
+async def get_ip_info(ip):
+    url = f"http://ip-api.com/json/{ip}"
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, timeout=10) as resp:
+                if resp.status == 200:
+                    data = await resp.json()
+                    return {
+                        "country": data.get("country", "N/A"),
+                        "region": data.get("regionName", "N/A"),
+                        "city": data.get("city", "N/A"),
+                        "org": data.get("org", "N/A"),
+                        "isp": data.get("isp", "N/A"),
+                    }
+    except Exception as e:
+        print(f"IP info fetch error: {e}")
+    return None
+
 # Port scanner (top 100 common ports)
 COMMON_PORTS = [
     21,22,23,25,53,80,110,111,135,139,143,443,445,993,995,1723,3306,
@@ -241,8 +259,29 @@ async def status_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     domain = context.args[0].lower()
     await update.message.reply_text(f"⏳ Checking status for {domain} ...")
+
+    try:
+        ip_address = socket.gethostbyname(domain)
+    except socket.gaierror:
+        await update.message.reply_text("❌ Unable to resolve domain.")
+        return
+
     status = await check_domain_status(domain)
-    msg = f"{domain} is {'UP ✅' if status else 'DOWN ❌'}"
+    ip_info = await get_ip_info(ip_address)
+
+    msg = (
+        f"🔍 Status for: {domain}\n"
+        f"{'✅ Domain is UP' if status else '❌ Domain is DOWN'}\n"
+        f"🌐 IP Address: {ip_address}\n"
+    )
+
+    if ip_info:
+        msg += (
+            f"📍 Location: {ip_info['city']}, {ip_info['region']}, {ip_info['country']}\n"
+            f"🏢 ISP: {ip_info['isp']}\n"
+            f"🔌 Org: {ip_info['org']}"
+        )
+
     add_to_history(update.effective_user.id, "status", domain)
     await update.message.reply_text(msg)
 
